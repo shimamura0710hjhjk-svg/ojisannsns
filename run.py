@@ -37,7 +37,7 @@ def install_requirements():
 def start_app():
     """アプリケーションの起動"""
     print("\n" + "=" * 60)
-    print("🧔💕 おじさんと女の子のコンバーター 💕🧔")
+    print("🧔💕 おじさんコンバーター 💕🧔")
     print("=" * 60)
     print("\n🚀 アプリケーションを起動中...\n")
     
