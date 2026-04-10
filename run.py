@@ -44,7 +44,14 @@ def start_app():
     os.environ['FLASK_APP'] = 'app.py'
     os.environ['FLASK_ENV'] = 'development'
     
-    from app import app
+    try:
+        from app import app
+    except ModuleNotFoundError:
+        print("❌ app.py が見つかりません")
+        raise
+    except ImportError as e:
+        print(f"❌ app.py のインポートに失敗しました: {e}")
+        raise
     
     print("✓ サーバーが起動しました")
     print("\n📱 ブラウザで http://localhost:5000 にアクセスしてください")
