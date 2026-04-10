@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧔 おじさんコンバーター 💬</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🧔 おじさんコンバーター 💬</h1>
+        <p class="subtitle">普通の文章をキモいおじさん構文に変換！</p>
+        
+        <div class="converter-section">
+            <!-- おじさんモード -->
+            <div class="mode-card ojisan-card">
+                <h2>🧔 おじさん変換機</h2>
+                <div class="input-group">
+                    <label for="ojisan_text">入力テキスト:</label>
+                    <textarea 
+                        id="ojisan_text" 
+                        class="input-textarea" 
+                        placeholder="変換したい文章を入力してください...&#10;&#10;例: 明日はデートですか？楽しみです。"
+                        rows="8"></textarea>
+                </div>
+                <div class="output-group">
+                    <label>変換結果:</label>
+                    <div id="ojisan_output" class="output-text">変換結果がここに表示されます</div>
+                </div>
+            </div>
+        </div>
+
+        <button id="convert_btn" class="convert-button">変換する</button>
+    </div>
+
+    <script>
+        document.getElementById('convert_btn').addEventListener('click', async () => {
+            const ojisanText = document.getElementById('ojisan_text').value;
+
+            if (!ojisanText.trim()) {
+                alert('テキストを入力してください');
+                return;
+            }
+
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ojisan_text: ojisanText,
+                    })
+                });
+
+                const data = await response.json();
+
+                // おじさんの結果を表示
+                if (data.ojisan) {
+                    document.getElementById('ojisan_output').textContent = data.ojisan;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('エラーが発生しました');
+            }
+        });
+
+        // Enterキー（Ctrl+Enter）で変換実行
+        document.getElementById('ojisan_text').addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                document.getElementById('convert_btn').click();
+            }
+        });
+    </script>
+</body>
+</html>
