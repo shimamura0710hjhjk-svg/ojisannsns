@@ -70,13 +70,48 @@ ojisan_text = st.text_area(
 )
 
 # 変換ボタン
-if st.button("変換する", use_container_width=True):
-    if ojisan_text.strip():
-        result = ojisan_converter(ojisan_text)
-        st.markdown("### ✨ 変換結果:")
-        st.info(result)
-    else:
-        st.warning("⚠️ テキストを入力してください")
+if  st.button("変換する"):
+    result = ojisan_converter(ojisan_text)
+    
+    # 標準の st.success を使わずに、自作のHTML/CSSで結果を表示するヨ！
+    st.markdown(f'''
+        <div style="
+            background-color: #fff0f5; /* 背景 */
+            border: 3px solid #ff69b4; /* 枠線 */
+            border-radius: 15px; /* 角を丸く */
+            padding: 20px; /* 中の余白 */
+            color: #000000; /* 文字を真っ黒に */
+            font-weight: 500; /* 文字を一番太く */
+            font-size: 1.2rem; /* 文字を少し大きく */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* 軽く影をつけて浮かせる */
+        ">
+            ✨ 変換結果：<br><br>
+            {result}
+        </div>
+    ''', unsafe_allow_html=True)
+
+        # デザイン設定（CSS）を一つの文字列にまとめます
+    # f''' で始めて ''' で終わるのがポイント！
+    # CSS内の { } は Pythonでは {{ }} と2回書くルールだヨ。
+    design_css = f'''
+<style>
+    /* 変換結果のボックスを白く、文字を太くする */
+    div[data-testid="stNotification"] {{
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border: 2px solid #ff69b4 !important;
+        border-radius: 10px !important;
+    }}
+
+    div[data-testid="stNotification"] p {{
+        color: #000000 !important;
+        font-weight: 900 !important;
+        font-size: 1.1rem !important;
+    }}
+</style>
+'''
+    
+    # ここでデザインを反映させるヨ！
+    st.markdown(design_css, unsafe_allow_html=True)
 
 # フッター
 st.markdown("---")
