@@ -122,8 +122,21 @@ def ojisan_converter(text):
     for particle, replacement in particle_map.items():
         text = text.replace(particle, replacement)
     
-    # 句点の処理：。で終わる文に「ヨ」「ネ」を付加、および各文に感情絵文字を追加
-    sentences = text.split('。')
+    # 句点の処理：。！\nで終わる文に「ヨ」「ネ」を付加、および各文に感情絵文字を追加
+    # 「。」「！」「改行」を句読点として扱う
+    import re
+    # キャプチャグループで句読点を保持
+    sentences_with_punct = re.split(r'([。！\n])', text)
+    
+    sentences = []
+    punctuation = []
+    for i in range(0, len(sentences_with_punct), 2):
+        if sentences_with_punct[i].strip():  # 空でない文のみ
+            sentences.append(sentences_with_punct[i])
+            if i + 1 < len(sentences_with_punct):
+                punctuation.append(sentences_with_punct[i + 1])
+            else:
+                punctuation.append('')
     ojisan_sentences = []
     
     # 感情キーワードの定義（各文の分析用）
@@ -195,9 +208,14 @@ def ojisan_converter(text):
             
             ojisan_sentences.append(sentence)
     
-    text = '。'.join(ojisan_sentences)
-    if text and not text.endswith('。'):
-        text += '。'
+    # 文と句読点を再結合
+    text = ''
+    for i, sentence in enumerate(ojisan_sentences):
+        text += sentence
+        if i < len(punctuation) and punctuation[i]:
+            text += punctuation[i]
+        elif i == len(ojisan_sentences) - 1 and not text.endswith(('。', '！')):
+            text += '。'
     
     # 別の句点パターンも処理（、で区切られた部分）
     if '、' in text:
@@ -489,3 +507,10 @@ if __name__ == "__main__":
     print("--- 別の例 ---")
     print("入力:", test_msg3)
     print("出力:", ojisan_converter(test_msg3))
+    print()
+    
+    # ！と改行を含むテスト例
+    test_msg4 = "やったー！\n君に会えた！\nほんと嬉しいよ。"
+    print("--- ！と改行を含むテスト ---")
+    print("入力:", repr(test_msg4))
+    print("出力:", ojisan_converter(test_msg4))
