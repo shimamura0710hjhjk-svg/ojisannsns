@@ -23,10 +23,10 @@ def ojisan_converter(text):
         "わたしを": "オレを",
         "わたしの": "オレの",
     }
-    
+
     for pronoun, ojisan_pronoun in ojisan_pronoun_map.items():
         text = text.replace(pronoun, ojisan_pronoun)
-    
+
     # 敬語をタメ口に変換（長い順でソート）
     polite_to_casual_map = {
         "いかがですか": "どうカナ",
@@ -40,12 +40,12 @@ def ojisan_converter(text):
         "います": "いるヨ",
         "ました": "ったネ",
         "ますか": "かなカナ？",
-        "ます": "ヨ",
+        "ます": "ますヨ",
         "です。": "だヨ。",
         "ですか": "かなカナ？",
         "ですね": "だネ",
         "の話": "の話さ",
-        "ありがとうございます": "ありがとうナ",
+        "ありがとうございます": "ありがとネ",
         "こちらこそ": "こっちこそ",
         "そうですね": "そうだヨネ",
         "そうです": "そうだヨ",
@@ -53,14 +53,15 @@ def ojisan_converter(text):
         "良いです": "良いネ",
         "大丈夫です": "大丈夫だヨ",
         "わかりました": "わかったヨ",
-        "了解です": "了解だヨ",
+        "了解です": "了解ですヨ",
     }
-    
+
     # 長い順でソート
-    sorted_polite = sorted(polite_to_casual_map.items(), key=lambda x: len(x[0]), reverse=True)
+    sorted_polite = sorted(polite_to_casual_map.items(),
+                           key=lambda x: len(x[0]), reverse=True)
     for polite, casual in sorted_polite:
         text = text.replace(polite, casual)
-    
+
     # 通常のタメ口もおじさん構文に変換（敬語ではない普通の文も対応）
     casual_to_ojisan_map = {
         "だね。": "だネ。",
@@ -98,11 +99,12 @@ def ojisan_converter(text):
         "ですね": "だネ",
         "です": "だヨ",
     }
-    
-    sorted_casual = sorted(casual_to_ojisan_map.items(), key=lambda x: len(x[0]), reverse=True)
+
+    sorted_casual = sorted(casual_to_ojisan_map.items(),
+                           key=lambda x: len(x[0]), reverse=True)
     for casual, ojisan in sorted_casual:
         text = text.replace(casual, ojisan)
-    
+
     # 助詞の古めかしい変換処理
     particle_map = {
         "ては": "ちゃあ",
@@ -118,26 +120,30 @@ def ojisan_converter(text):
         "なあ": "ナア",
         "ぞ。": "ゾ。",
     }
-    
+
     for particle, replacement in particle_map.items():
         text = text.replace(particle, replacement)
-    
+
     # 句点の処理：。で終わる文に「ヨ」「ネ」を付加、および各文に感情絵文字を追加
     sentences = text.split('。')
     ojisan_sentences = []
-    
+
     # 感情キーワードの定義（各文の分析用）
-    positive_keywords_for_analysis = ['楽しい', '楽しみ', '嬉しい', '好き', '大好き', '愛', '幸せ', '最高', '素敵', 'デート', '会いたい', 'キス', '最強', '完璧']
-    negative_keywords_for_analysis = ['悲しい', '辛い', '困った', '寂しい', '怒り', '泣く', '嫌', '最悪', 'つらい', '嫌い']
-    
+    positive_keywords_for_analysis = [
+        '楽', '楽しみ', '嬉しい', '好き', '大好き', '愛', '幸せ', '最高', '素敵', 'デート', '会いたい', 'キス', '最強', '完璧']
+    negative_keywords_for_analysis = [
+        '悲', '辛い', '困った', '寂', '怒', '泣く', '嫌', '最悪', 'つらい', '嫌い']
+
     for i, sentence in enumerate(sentences):
         if sentence.strip():  # 空の文は無視
             sentence = sentence.strip()
-            
+
             # 各文の感情を判定（表情絵文字用）
-            sentence_positive_count = sum(1 for word in positive_keywords_for_analysis if word in sentence)
-            sentence_negative_count = sum(1 for word in negative_keywords_for_analysis if word in sentence)
-            
+            sentence_positive_count = sum(
+                1 for word in positive_keywords_for_analysis if word in sentence)
+            sentence_negative_count = sum(
+                1 for word in negative_keywords_for_analysis if word in sentence)
+
             # 既に助詞で終わっていない場合
             if not sentence.endswith(('ヨ', 'ネ', 'ナ', 'カナ', '？', 'な', 'ナ', 'ゾ', 'ネエ', 'ナア')):
                 # 確認文や質問文の場合
@@ -151,7 +157,7 @@ def ojisan_converter(text):
                     sentence += 'ネ'
                 else:
                     sentence += 'ネ'
-            
+
             # 各文の末尾に表情絵文字を追加
             emotion_emoji = ""
             if sentence_positive_count > sentence_negative_count:
@@ -167,16 +173,16 @@ def ojisan_converter(text):
             elif sentence_negative_count > 0:
                 # ネガティブな感情がある場合
                 if '悲しい' in sentence or '泣く' in sentence or '寂しい' in sentence:
-                    emotion_emoji = "😢"
+                    emotion_emoji = ['😢','😭','🥶''😭', '😥', '😓', '😰', '😨', '😱', '💧']
                 elif '怒り' in sentence:
-                    emotion_emoji = "😠"
+                    emotion_emoji = ['😠','😤'💢', '😡', '💥'']
                 else:
                     emotion_emoji = "😭"
             else:
                 # 中立的な文（ニュートラル感情にも絵文字を付与）
                 if '？' in sentence:
                     # 質問文には複数パターン
-                    question_emojis = ['🤔', '❓', '🙄', '😐']
+                    question_emojis = ['🤔, '❓', '🙄', '😐']
                     emotion_emoji = question_emojis[i % len(question_emojis)]
                 elif 'かな' in sentence or 'ようだ' in sentence or 'みたい' in sentence:
                     # 推測・推量表現
@@ -262,7 +268,7 @@ def ojisan_converter(text):
     # ポジティブな感情キーワード（絵文字マップ）
     positive_emotions = {
         "楽しい": "楽しい😘",
-        "楽しみ": "楽しみ😘",
+       "楽しみ": "楽しみだネ🎵",
         "嬉しい": "嬉しい😍",
         "嬉しい": "嬉しい😍",
         "喜び": "喜び😍",
@@ -290,7 +296,14 @@ def ojisan_converter(text):
         "幸せ": "幸せ💕",
         "うれしい": "うれしい😍",
     }
-    
+    # 褒める（絵文字マップ）
+    negative_emotions = {
+        "すごい": "すごいネ‼️尊敬しちゃうナ✨",
+        "可愛い": "可愛いネ❤️チュッ（笑）",
+        "頑張れ": "頑張る君も素敵だヨ応援してるゾ❤️",
+        
+    }
+   
     # ネガティブな感情キーワード（絵文字マップ）
     negative_emotions = {
         "悲しい": "悲しい😭",
@@ -298,6 +311,7 @@ def ojisan_converter(text):
         "困った": "困った😭",
         "寂しい": "寂しい😭",
         "怒り": "怒り💢",
+        "怒": "おこだヨ💢",
         "怒ってる": "怒ってる💢",
         "怒ってる": "怒ってる💢",
         "つらい": "つらい😭",
@@ -307,6 +321,10 @@ def ojisan_converter(text):
         "つらいな": "つらいな😭",
         "泣く": "泣く😭",
         "うざい": "うざい🙄",
+        "むかつく": "ムカつく😕", 
+        "不安": "心配だヨ💦",
+        "大丈夫": "大丈夫かナ❓",
+
     }
     
     # 会話的な反応キーワード
@@ -376,11 +394,10 @@ def ojisan_converter(text):
         "会社": "🏢",
         "仕事": "💼",
         "家": "🏠",
-        "愛": "💕",
-        "心": "💕",
-        "デート": "💕",
-        "恋": "💕",
-        "キス": "💋",
+        "愛": ['❤️','💕',]
+        "デート":  ['❤️','💕',]
+        "恋":  ['❤️','💑','💖',]
+        "キス": ['😘','💕','👄','💏',]
         "抱きしめる": "🤗",
         "手": "🤝",
         "腕": "💪",
