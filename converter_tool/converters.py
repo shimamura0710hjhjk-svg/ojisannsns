@@ -173,16 +173,16 @@ def ojisan_converter(text):
             elif sentence_negative_count > 0:
                 # ネガティブな感情がある場合
                 if '悲しい' in sentence or '泣く' in sentence or '寂しい' in sentence:
-                    emotion_emoji = ['😢','😭','🥶''😭', '😥', '😓', '😰', '😨', '😱', '💧']
+                   emotion_emoji = ['😢','😭','😰','💦','😨','😱']
                 elif '怒り' in sentence:
-                    emotion_emoji = ['😠','😤'💢', '😡', '💥'']
+                    emotion_emoji = ['😤', '😤', '💢', '😡', '💥']  
                 else:
                     emotion_emoji = "😭"
             else:
                 # 中立的な文（ニュートラル感情にも絵文字を付与）
                 if '？' in sentence:
                     # 質問文には複数パターン
-                    question_emojis = ['🤔, '❓', '🙄', '😐']
+                    question_emojis = ['🤔', '❓', '🙄', '😐']
                     emotion_emoji = question_emojis[i % len(question_emojis)]
                 elif 'かな' in sentence or 'ようだ' in sentence or 'みたい' in sentence:
                     # 推測・推量表現
@@ -394,10 +394,10 @@ def ojisan_converter(text):
         "会社": "🏢",
         "仕事": "💼",
         "家": "🏠",
-        "愛": ['❤️','💕',]
-        "デート":  ['❤️','🧑‍🤝‍🧑✨💞',]
-        "恋":  ['❤️','💑','💖',]
-        "キス": ['😘','💕','👄','💏',]
+        "愛": '❤️',
+      "デート":  '🧑‍🤝‍🧑✨💞',
+        "恋":  '💑💖',
+        "キス": '😘💕👄💏',
         "抱きしめる": "🤗",
         "手": "🤝",
         "腕": "💪",
@@ -415,6 +415,7 @@ def ojisan_converter(text):
         "指": "👆",
         "足": "🦵",
     }
+
     
     # 施設・場所の絵文字を追加（長い順）
     sorted_locations = sorted(location_emoji_map.items(), key=lambda x: len(x[0]), reverse=True)
@@ -442,8 +443,8 @@ def ojisan_converter(text):
     # 文章の話題を判定（出現した絵文字・キーワードから）
     topic_analysis = {
         "グルメ・デート": [emoji for _, emoji in food_emoji_map.items()] + [emoji for _, emoji in location_emoji_map.items()],
-        "愛情,好き，ラブ，愛してる，大好き": ["😘", "😍", "💕", "💛", "❤️", "😍"],
-        "怒る,嫌い,きもい，悲しい，泣く，": ['😭','🙄','😠', '😤', '💢', '😡', '💥''😭', '😥', '😓', '😰', '😨', '😱', '💧'],
+        "愛情,好き，ラブ，愛してる，大好き": ['😘', '😍', '💕', '💛', '❤️', '😍'],
+        "怒る,嫌い,きもい，悲しい，泣く，": ['😭','🙄','😠', '😤', '💢', '😡', '💥','😭', '😥', '😓', '😰', '😨', '😱', '💧'],
     }
     
     topic_scores = {}
@@ -465,9 +466,9 @@ def ojisan_converter(text):
             if dominant_topic == "グルメ・デート":
                 overall_emotion_emoji = " 😍🍽️💕"
             else:
-                overall_emotion_emoji = " 😍♡💛"
+                overall_emotion_emoji = " 😍💛"
         else:
-            overall_emotion_emoji = " 😘♡"
+            overall_emotion_emoji = " 😘"
     elif negative_count > positive_count:
         # ネガティブな感情が勝っている場合
         if negative_count >= 2:
@@ -505,4 +506,4 @@ if __name__ == "__main__":
     test_msg3 = "朝からずっと君のことばかり考えている。会いたい。"
     print("--- 別の例 ---")
     print("入力:", test_msg3)
-    print("出力:", ojisan_converter(test_msg3))
+    print("出力:", ojisan_converter(test_msg3));
